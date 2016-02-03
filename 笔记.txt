@@ -34,7 +34,7 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 
 	step1: 继承HttpServlet抽象类
 	step2: 重写doGet()或者doPost()方法, 取决于用户提交请求的方式。get和post的区别可以参考JSP的笔记。
-	step3: 在项目的WEB-INF目录下的web.xml项目部署文件中注册Servlet, 要配置两个标签，其中在每个标签中还要配置子标签。(重要！！！！)
+	step3: 在工程项目的WEB-INF目录下的web.xml项目部署文件中注册Servlet, 要配置两个标签，其中在每个标签中还要配置子标签。(重要！！！！)
 
 		<servlet>
 			<servlet-name>HelloServlet</servlet-name>   
@@ -52,7 +52,7 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 		<url-pattern>, 表示HelloServlet这个Servlet被访问的路径，要和请求的链接地址一一对应。
 		               Don't forget the forward slash(/) in the url-pattern.
 
-		               http://stackoverflow.com/questions/28315618/why-should-url-pattern-in-servlet-mapping-start-with-forward-slash
+		http://stackoverflow.com/questions/28315618/why-should-url-pattern-in-servlet-mapping-start-with-forward-slash
 		/******************************************************************************************/
 
 	具体可以再看看  www.imooc.com/video/5537     注意视频中用的MyEclipse, 跟Eclipse J2EE有差别！！！
