@@ -1,0 +1,10 @@
+1. 什么是Servlet?
+
+	Servlet是在服务器端运行的Java编写的程序，运行于支持Java的应用服务器中。其主要功能在于交互式的浏览和修改数据，生成动态WEB内容。一个Servlet
+就是指任何实现了这个Servlet接口的Java类。并且可以根据 “请求-响应”编程模型来访问的驻留在服务器内存里的Servlet程序。
+
+	注意：先有Servlet，再有JSP. 换句话说JSP的前身就是Servlet. (回想一下JSP页面的生命周期！！)
+
+2. Tomcat容器等级
+	
+	Tomcat的容器分为4个等级,分别是：Engine, Host, Context, Wrapper. 如图所示：
