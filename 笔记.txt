@@ -5,6 +5,46 @@
 
 	注意：先有Servlet，再有JSP. 换句话说JSP的前身就是Servlet. (回想一下JSP页面的生命周期！！)
 
-2. Tomcat容器等级
+2. Tomcat容器等级  
 	
-	Tomcat的容器分为4个等级,分别是：Engine, Host, Context, Wrapper. 如图所示：
+	Tomcat的容器分为4个等级,分别是：Engine, Host, Context, Wrapper. 类似box model, 从左到右，一层一层包住。整体可以看做有一个大的容器
+包住了这4个容器，如虚线Container所示。然后，还可以看做有一个Servlet容器包住了Context容器和Wrapper容器，如虚线所示。
+	
+	注意：Servlet容器内可以有多个Context容器，Context容器内可以有多个Wrapper容器。
+	
+	假设访问的URL是 http://www.mydomain.com/app/index.html, 则Wrapper容器管理具体的访问资源,例如 index.html；Context容器管理各个
+wrapper资源的集合,例如 app, 一个Context对应一个Web工程; Host容器管理各个context资源的集合,例如 www.mydomain.com
+
+	注意：具体多看看图！！http://xiaobaoqiu.github.io/blog/2015/03/18/tomcatjia-gou/
+
+
+3. 手工编写一个Servlet
+
+	首先我们要了解一些class hierarchy的信息，如下所示：
+
+	Servlet(interface)    ----->   三个方法： Init(), service(), destroy()
+		🔼
+	GenericServlet(abstract class) -----> 与协议无关的Servlet, 实现了Servlet接口。
+		🔼
+	HttpServlet(abstract class) ------->  实现了HTTP协议的Servlet, 仍然是抽象类要被继承。
+		🔼
+	自定义Servlet		---------->  要继承HttpServlet, 并override重写 doGet与doPost方法。(我们要编写的内容！！！)
+
+
+	step1: 继承HttpServlet抽象类
+	step2: 重写doGet()或者doPost()方法, 取决于用户提交请求的方式。get和post的区别可以参考JSP的笔记。
+	step3: 
+
+4. 
+
+
+
+
+
+
+
+
+
+
+
+
