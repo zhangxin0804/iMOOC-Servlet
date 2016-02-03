@@ -29,28 +29,51 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 		🔼
 	HttpServlet(abstract class) ------->  实现了HTTP协议的Servlet, 仍然是抽象类要被继承。
 		🔼
-	自定义Servlet		---------->  要继承HttpServlet, 并override重写 doGet与doPost方法。(我们要编写的内容！！！)
+	自定义Servlet		---------->  要继承HttpServlet, 并override重写 doGet()与doPost()方法。(我们要编写的内容！！！)
 
 
 	step1: 继承HttpServlet抽象类
 	step2: 重写doGet()或者doPost()方法, 取决于用户提交请求的方式。get和post的区别可以参考JSP的笔记。
-	step3: 在项目的WEB-INF目录下的web.xml项目部署文件中注册Servlet, 要配置两个标签，其中在每个标签中还要配置子标签。
+	step3: 在项目的WEB-INF目录下的web.xml项目部署文件中注册Servlet, 要配置两个标签，其中在每个标签中还要配置子标签。(重要！！！！)
 
 		<servlet>
-			<servlet-name>表示给这个Servlet起一个名字</servlet-name>
-			<servlet-class>表示要访问的Servlet所在的类, 类名要完整如果在某个package下，还要写package名字</servlet-class>
+			<servlet-name>HelloServlet</servlet-name>   
+			<servlet-class>packageName.HelloServlet</servlet-class>
 		</servlet>
 
 		<servlet-mapping>
-			<servlet-name>要和上面标签中定义的servlet name一一对应</servlet-name>
-			<url-pattern>表示HelloServlet这个Servlet被访问的路径，要和请求的链接地址一一对应</url-pattern>
+			<servlet-name>HelloServlet</servlet-name>
+			<url-pattern>/servlet/HelloServlet</url-pattern>
 		</servlet-mapping>
 
+		/******************************************************************************************/
+		<servlet-name>, 表示给这个Servlet起一个名字, 注意不管是在<servlet>大标签还是<servlet-mapping>大标签，要一一对应！！！
+		<servlet-class>, 表示要访问的Servlet所在的类, 类名要完整如果在某个package下，还要写package名字。
+		<url-pattern>, 表示HelloServlet这个Servlet被访问的路径，要和请求的链接地址一一对应。
+		               Don't forget the forward slash(/) in the url-pattern.
+
+		               http://stackoverflow.com/questions/28315618/why-should-url-pattern-in-servlet-mapping-start-with-forward-slash
+		/******************************************************************************************/
 
 	具体可以再看看  www.imooc.com/video/5537     注意视频中用的MyEclipse, 跟Eclipse J2EE有差别！！！
 
-4. 
+4. 相对URL
+	
+	客户端的请求有get请求和post请求，其中get请求可以直接通过超级链接来实现，如下所示：
+	<a href = "servlet/HelloServlet">Get方式请求HelloServlet</a><br>
 
+	注意：这个代码编写在index.jsp中，我们的index.jsp一般直接存在于web工程目录下。我们要访问的是一个虚拟路径, 这里表示servlet目录和此时
+的index.jsp属于同一目录下也即当前目录，因此我们要访问servlet目录下的HelloServlet, 直接用相对URL的方式访问即可。
+
+	注意：之所以这里可以访问这个虚拟路径，有可能是因为我们在web.xml中注册servlet时，设定了<url-pattern>, 所以又进一步告诉我们，请求的url
+要与web.xml中注册的那个<url-pattern>要保持一致！！！！！Don't forget the forward slash(/) in the url-pattern.
+
+
+
+5. 如果是使用MyEclipse IDE的话，不需要手动去配置web.xml并注册servlet.
+
+
+6. 
 
 
 
