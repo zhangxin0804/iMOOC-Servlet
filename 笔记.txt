@@ -118,12 +118,17 @@ init()方法只被调用一次。Servlet实例是长期驻留在服务器的内�
 	request                                    service()方法中的request参数
 	response								   service()方法中的response参数
 	session									   request.getSession()函数
-	application								   
+	application								   getServletContext()函数
 	exception                                  Throwable
 	page    								   this
 	pageContext                                PageContext
 	config									   getServletConfig()
 
+
+
+11. 如何从Servlet获取表单数据？
+
+	
 
 
 
