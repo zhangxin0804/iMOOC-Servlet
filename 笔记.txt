@@ -1,7 +1,7 @@
 1. 什么是Servlet?
 
 	Servlet是在服务器端运行的Java编写的程序，运行于支持Java的应用服务器中。其主要功能在于交互式的浏览和修改数据，生成动态WEB内容。一个Servlet
-程序就是一个Java类，该类实现了Servlet接口。并且可以根据 “请求-响应”编程模型来访问的驻留在服务器内存里的Servlet程序。
+程序就是一个Java类，该类实现了Servlet接口。并且可以根据 “请求-响应”编程模型来访问的驻留在服务器内存里的Servlet实例。
 
 	注意：先有Servlet，再有JSP. 换句话说JSP的前身就是Servlet. (回想一下JSP页面的生命周期！！涉及到JSP转化成Servlet的过程！！)
 
@@ -73,8 +73,56 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 5. 如果是使用MyEclipse IDE的话，不需要手动去配置web.xml并注册servlet.
 
 
-6. 
+6. Servlet执行流程 (以get请求方式为例)
+	
+	【1】Get方式请求HelloServlet, 以超级链接方式提交<a href = "servlet/HelloServlet">
+	【2】服务器去web.xml中，在<servlet-mapping>标签中的<url-pattern>中寻找与之对应的url地址，/servlet/HelloServlet
+	【3】然后再去<servlet>标签中的<servlet-name>标签中，寻找与之前名字一致的对应的处理类<servlet-class>
+	【4】于是就可以找到对应的处理类，然后根据请求方式去执行类中重写的doGet()或者doPost()方法。
 
+7. Servlet生命周期
+		
+	 最最开始要先调用自定义Servlet类的构造方法，生成Servlet的实例！！！
+	【1】初始化阶段，调用init()方法。
+	【2】响应客户端请求，调用service()方法。由service()方法根据提交方式选择执行doGet()或者doPost()方法。
+	【3】服务器终止shutdown时，调用destroy()方法。
+
+	注意：具体的可以参考 Servlet生命周期.png
+	注意：回想Servlet class hierarch, 最顶层的Servlet接口中的三大方法就是 init(), service()和destroy()
+
+
+8. 编写Servlet的doGet()和doPost()方法时，需要抛出 ServletException 和 IOException
+
+
+9. Tomcat容器装载Servlet的几种情况。
+
+	【1】Servlet容器启动时自动装载某些Servlet, 实现它只需要在web.xml文件中的<Servlet></Servlet>之间，添加如下代码：
+<loadon-startup>1</loadon-startup>, 数字越小表示优先级别越高。
+
+	【2】在Servlet容器启动后，客户首次向Servlet发送请求，此时Servlet被加载。
+
+	【3】Servlet类文件被更新后，重新装载Servlet，也会重新编译这个Servlet类。
+
+	Servelet一旦被加载后，Servelet容器调用构造方法创建一个Servlet实例, 并且调用init()方法进行初始化。在Servlet的整个生命周期内，
+init()方法只被调用一次。Servlet实例是长期驻留在服务器的内存当中的。
+	对于情况【1】, Servlet被自动装载意味着他们的实例被创建，且执行了init()初始化方法。
+
+
+
+
+10. Servlet与9大JSP内置对象的对应关系
+
+	JSP对象                                   Servlet中怎样获得
+	---------------------------------------------------------------
+	out										   response.getWriter()
+	request                                    service()方法中的request参数
+	response								   service()方法中的response参数
+	session									   request.getSession()函数
+	application								   
+	exception                                  Throwable
+	page    								   this
+	pageContext                                PageContext
+	config									   getServletConfig()
 
 
 
