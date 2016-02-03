@@ -1,19 +1,20 @@
 1. 什么是Servlet?
 
 	Servlet是在服务器端运行的Java编写的程序，运行于支持Java的应用服务器中。其主要功能在于交互式的浏览和修改数据，生成动态WEB内容。一个Servlet
-就是指任何实现了这个Servlet接口的Java类。并且可以根据 “请求-响应”编程模型来访问的驻留在服务器内存里的Servlet程序。
+程序就是一个Java类，该类实现了Servlet接口。并且可以根据 “请求-响应”编程模型来访问的驻留在服务器内存里的Servlet程序。
 
-	注意：先有Servlet，再有JSP. 换句话说JSP的前身就是Servlet. (回想一下JSP页面的生命周期！！)
+	注意：先有Servlet，再有JSP. 换句话说JSP的前身就是Servlet. (回想一下JSP页面的生命周期！！涉及到JSP转化成Servlet的过程！！)
 
-2. Tomcat容器等级  
+2. Tomcat容器等级 
 	
 	Tomcat的容器分为4个等级,分别是：Engine, Host, Context, Wrapper. 类似box model, 从左到右，一层一层包住。整体可以看做有一个大的容器
 包住了这4个容器，如虚线Container所示。然后，还可以看做有一个Servlet容器包住了Context容器和Wrapper容器，如虚线所示。
 	
-	注意：Servlet容器内可以有多个Context容器，Context容器内可以有多个Wrapper容器。
+	注意：Servlet容器内可以有多个Context容器(多个工程)，Context容器内可以有多个Wrapper容器(一个工程内的多个访问资源)。
 	
 	假设访问的URL是 http://www.mydomain.com/app/index.html, 则Wrapper容器管理具体的访问资源,例如 index.html；Context容器管理各个
-wrapper资源的集合,例如 app, 一个Context对应一个Web工程; Host容器管理各个context资源的集合,例如 www.mydomain.com
+wrapper资源的集合,例如 app, 一个Context对应一个Web工程; Host容器管理各个context资源的集合相当于就是管理多个web工程,例如 
+www.mydomain.com可以管理下一级的app1或者app2等。
 
 	注意：具体多看看图！！http://xiaobaoqiu.github.io/blog/2015/03/18/tomcatjia-gou/
 
@@ -24,7 +25,7 @@ wrapper资源的集合,例如 app, 一个Context对应一个Web工程; Host容�
 
 	Servlet(interface)    ----->   三个方法： Init(), service(), destroy()
 		🔼
-	GenericServlet(abstract class) -----> 与协议无关的Servlet, 实现了Servlet接口。
+	GenericServlet(abstract class) -----> 与协议无关的Servlet, implements实现了Servlet接口。
 		🔼
 	HttpServlet(abstract class) ------->  实现了HTTP协议的Servlet, 仍然是抽象类要被继承。
 		🔼
@@ -33,7 +34,20 @@ wrapper资源的集合,例如 app, 一个Context对应一个Web工程; Host容�
 
 	step1: 继承HttpServlet抽象类
 	step2: 重写doGet()或者doPost()方法, 取决于用户提交请求的方式。get和post的区别可以参考JSP的笔记。
-	step3: 
+	step3: 在项目的WEB-INF目录下的web.xml项目部署文件中注册Servlet, 要配置两个标签，其中在每个标签中还要配置子标签。
+
+		<servlet>
+			<servlet-name>表示给这个Servlet起一个名字</servlet-name>
+			<servlet-class>表示要访问的Servlet所在的类, 类名要完整如果在某个package下，还要写package名字</servlet-class>
+		</servlet>
+
+		<servlet-mapping>
+			<servlet-name>要和上面标签中定义的servlet name一一对应</servlet-name>
+			<url-pattern>表示HelloServlet这个Servlet被访问的路径，要和请求的链接地址一一对应</url-pattern>
+		</servlet-mapping>
+
+
+	具体可以再看看  www.imooc.com/video/5537     注意视频中用的MyEclipse, 跟Eclipse J2EE有差别！！！
 
 4. 
 
