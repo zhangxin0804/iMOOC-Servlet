@@ -10,7 +10,7 @@
 	Tomcat的容器分为4个等级,分别是：Engine, Host, Context, Wrapper. 类似box model, 从左到右，一层一层包住。整体可以看做有一个大的容器
 包住了这4个容器，如虚线Container所示。然后，还可以看做有一个Servlet容器包住了Context容器和Wrapper容器，如虚线所示。
 	
-	注意：Servlet容器内可以有多个Context容器(多个工程)，Context容器内可以有多个Wrapper容器(一个工程内的多个访问资源)。
+	注意：Servlet容器内可以有多个Context容器(多个Web工程)，Context容器内可以有多个Wrapper容器(一个工程内的多个访问资源)。
 	
 	假设访问的URL是 http://www.mydomain.com/app/index.html, 则Wrapper容器管理具体的访问资源,例如 index.html；Context容器管理各个
 wrapper资源的集合,例如 app, 一个Context对应一个Web工程; Host容器管理各个context资源的集合相当于就是管理多个web工程,例如 
@@ -23,7 +23,7 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 
 	首先我们要了解一些class hierarchy的信息，如下所示：
 
-	Servlet(interface)    ----->   三个方法： Init(), service(), destroy()
+	Servlet(interface)    ----->   三个方法： init(), service(), destroy()
 		🔼
 	GenericServlet(abstract class) -----> 与协议无关的Servlet, implements实现了Servlet接口。
 		🔼
@@ -33,7 +33,7 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 
 
 	step1: 继承HttpServlet抽象类
-	step2: 重写doGet()或者doPost()方法, 取决于用户提交请求的方式。get和post的区别可以参考JSP的笔记。
+	step2: 重写doGet()或者doPost()方法, 取决于用户提交请求的方式。get和post的区别可以参考JSP的笔记。实际上是调用了service()方法。
 	step3: 在工程项目的WEB-INF目录下的web.xml项目部署文件中注册Servlet, 要配置两个标签，其中在每个标签中还要配置子标签。(重要！！！！)
 
 		<servlet>
@@ -55,34 +55,43 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 		http://stackoverflow.com/questions/28315618/why-should-url-pattern-in-servlet-mapping-start-with-forward-slash
 		/******************************************************************************************/
 
-	具体可以再看看  www.imooc.com/video/5537     注意视频中用的MyEclipse, 跟Eclipse J2EE有差别！！！
+	具体可以再看看  www.imooc.com/video/5537     
+	注意视频中用的MyEclipse, 跟Eclipse J2EE有差别！！！使用MyEclipse IDE，创建servlet时会帮助我们直接注册Servlet.
+
+
+	注意：Servlet类中，给浏览器输出的对象是PrinterWrite类型的！！可以通过 response.getWriter()得到，同时还需要import相应的类
+	     import java.io.PrintWriter;
+
+
 
 4. 相对URL
 	
 	客户端的请求有get请求和post请求，其中get请求可以直接通过超级链接来实现，如下所示：
 	<a href = "servlet/HelloServlet">Get方式请求HelloServlet</a><br>
 
-	注意：这个代码编写在index.jsp中，我们的index.jsp一般直接存在于web工程目录下。我们要访问的是一个虚拟路径, 这里表示servlet目录和此时
-的index.jsp属于同一目录下也即当前目录，因此我们要访问servlet目录下的HelloServlet, 直接用相对URL的方式访问即可。
+	注意：这里我们是通过get方式去请求一个Servlet程序，因此这里的请求链接要与web.xml中的Servlet的注册也即<url-pattern>要一致，这样才能
+够找到相应的Servlet对应的那个class去执行doGet()方法。直接用相对URL的方式访问即可, 不需要项目所在根目录的那个forward slash /
 
-	注意：之所以这里可以访问这个虚拟路径，有可能是因为我们在web.xml中注册servlet时，设定了<url-pattern>, 所以又进一步告诉我们，请求的url
+	注意：之所以这里可以访问这个虚拟路径，是因为我们在web.xml中注册servlet时，设定了<url-pattern>, 所以又进一步告诉我们，请求的url
 要与web.xml中注册的那个<url-pattern>要保持一致！！！！！Don't forget the forward slash(/) in the url-pattern.
 
 
 
-5. 如果是使用MyEclipse IDE的话，不需要手动去配置web.xml并注册servlet.
+5. 如果是使用MyEclipse IDE的话，创建servlet时会帮助我们直接注册Servlet, 不需要手动去配置web.xml并注册servlet.
 
 
-6. Servlet执行流程 (以get请求方式为例)
-	
-	【1】Get方式请求HelloServlet, 以超级链接方式提交<a href = "servlet/HelloServlet">
+6. Servlet执行流程 (以get请求方式为例, ************重要***********)
+
+	既然是Servlet执行流程，就意味着该Servlet已经加载到容器中，并调用构造函数实例化了对象，然后执行了初始化init()方法。然后才是下面的
+过程。
+	【1】Get方式请求HelloServlet, 以超级链接方式提交<a href = "servlet/HelloServlet">, 注意这里是一个虚拟路径。
 	【2】服务器去web.xml中，在<servlet-mapping>标签中的<url-pattern>中寻找与之对应的url地址，/servlet/HelloServlet
 	【3】然后再去<servlet>标签中的<servlet-name>标签中，寻找与之前名字一致的对应的处理类<servlet-class>
 	【4】于是就可以找到对应的处理类，然后根据请求方式去执行类中重写的doGet()或者doPost()方法。
 
-7. Servlet生命周期
+7. Servlet生命周期 (************重要***********)
 		
-	 最最开始要先调用自定义Servlet类的构造方法，生成Servlet的实例！！！
+	【0】最最开始要先调用自定义Servlet类的构造方法，生成Servlet的实例！！！相当于先加载Servlet ！！
 	【1】初始化阶段，调用init()方法。
 	【2】响应客户端请求，调用service()方法。由service()方法根据提交方式选择执行doGet()或者doPost()方法。
 	【3】服务器终止shutdown时，调用destroy()方法。
@@ -97,14 +106,14 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 9. Tomcat容器装载Servlet的几种情况。
 
 	【1】Servlet容器启动时自动装载某些Servlet, 实现它只需要在web.xml文件中的<Servlet></Servlet>之间，添加如下代码：
-<loadon-startup>1</loadon-startup>, 数字越小表示优先级别越高。
+<loadon-startup>1</loadon-startup>, 数字越小表示优先级别越高。自动装载后，意味着已经创建了Servlet实例，并执行了初始化init()方法。
 
-	【2】在Servlet容器启动后，客户首次向Servlet发送请求，此时Servlet被加载。
+	【2】在Servlet容器启动后，客户首次向Servlet发送请求，此时Servlet被加载。(比较常见)
 
 	【3】Servlet类文件被更新后，重新装载Servlet，也会重新编译这个Servlet类。
 
 	Servelet一旦被加载后，Servelet容器调用构造方法创建一个Servlet实例, 并且调用init()方法进行初始化。在Servlet的整个生命周期内，
-init()方法只被调用一次。Servlet实例是长期驻留在服务器的内存当中的。
+init()方法只被调用一次。Servlet实例是长期驻留在服务器的内存当中的, 当服务器shutdown时会调用destroy()方法，销毁这个Servlet实例。
 	对于情况【1】, Servlet被自动装载意味着他们的实例被创建，且执行了init()初始化方法。
 
 
@@ -115,19 +124,59 @@ init()方法只被调用一次。Servlet实例是长期驻留在服务器的内�
 	JSP对象                                   Servlet中怎样获得
 	---------------------------------------------------------------
 	out										   response.getWriter()
-	request                                    service()方法中的request参数
+	request									   service()方法中的request参数
 	response								   service()方法中的response参数
 	session									   request.getSession()函数
 	application								   getServletContext()函数
-	exception                                  Throwable
+	exception 								   hrowable
 	page    								   this
-	pageContext                                PageContext
+	pageContext 							   PageContext
 	config									   getServletConfig()
+
 
 
 
 11. 如何从Servlet获取表单数据？
 
+
+
+12. response.setContentType("")
+	
+	作用是使客户端浏览器，区分不同种类的数据，并根据不同的MIME调用浏览器内不同的程序嵌入模块来处理相应的数据。如果该方法在getWriter()方法
+被调用之前调用，那么响应的字符编码将仅从给出的内容类型中设置。该方法如果在getWriter()方法被调用之后或者在被提交之后调用，将不会设置响应的
+字符编码。
+
+
+
+13. 如何通过Servlet获取初始化参数？
+
+	在项目的WEB-INF目录下的项目部署文件web.xml中配置Servlet时，可以配置一些初始化参数。而在Servlet中可以通过ServletConfig接口提供的方法
+来获取这些初始化的参数。配置初始化参数如下所示, name-value pair是同时对应配置的：
+
+						<servlet>
+						  ............
+					      <init-param>
+					      	<param-name>username</param-name>
+					      	<param-value>zhangsan</param-value>
+					      </init-param>
+					      <init-param>
+					      	<param-name>password</param-name>
+					      	<param-value>123456</param-value>
+					      </init-param>
+					      ............
+					    </servlet>
+
+
+
+	具体的获取初始化参数的方法是： this.getInitParameter("param-name"), 参数是在web.xml中配置的对应的param-name标签的值。
+
+	public abstract class javax.servlet.GenericServlet implements javax.servlet.Servlet, 
+	                                                              javax.servlet.ServletConfig, java.io.Serializable 
+	点击该方法open implementation时可以得到上面的关系，说明这个方法是在GenericServlet这个抽象类中实现的，它实际上又是实现了ServletConfig
+那个接口中的这个方法。
+
+
+14. 
 	
 
 
