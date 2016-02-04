@@ -170,11 +170,10 @@ init()方法只被调用一次。Servlet实例是长期驻留在服务器的内�
 
 	具体的获取初始化参数的方法是： this.getInitParameter("param-name"), 参数是在web.xml中配置的对应的param-name标签的值。
 
+	点击该方法open implementation时可以得到下面的关系，说明这个方法最初是在ServletConfig接口中定义的，然后在GenericServlet这个抽象类
+中实现的，然后再由我们的自定义类继承下来的。
 	public abstract class javax.servlet.GenericServlet implements javax.servlet.Servlet, 
 	                                                              javax.servlet.ServletConfig, java.io.Serializable 
-	点击该方法open implementation时可以得到上面的关系，说明这个方法是在GenericServlet这个抽象类中实现的，它实际上又是实现了ServletConfig
-那个接口中的这个方法。
-
 
 14. 
 	
