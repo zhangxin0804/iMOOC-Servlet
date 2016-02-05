@@ -175,6 +175,9 @@ init()方法只被调用一次。Servlet实例是长期驻留在服务器的内�
 	public abstract class javax.servlet.GenericServlet implements javax.servlet.Servlet, 
 	                                                              javax.servlet.ServletConfig, java.io.Serializable 
 
+
+
+
 14. 
 	
 
