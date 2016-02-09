@@ -5,6 +5,8 @@
 
 	注意：先有Servlet，再有JSP. 换句话说JSP的前身就是Servlet. (回想一下JSP页面的生命周期！！涉及到JSP转化成Servlet的过程！！)
 
+
+
 2. Tomcat容器等级 
 	
 	Tomcat的容器分为4个等级,分别是：Engine, Host, Context, Wrapper. 类似box model, 从左到右，一层一层包住。整体可以看做有一个大的容器
@@ -17,6 +19,8 @@ wrapper资源的集合,例如 app, 一个Context对应一个Web工程; Host容�
 www.mydomain.com可以管理下一级的app1或者app2等。
 
 	注意：具体多看看图！！http://xiaobaoqiu.github.io/blog/2015/03/18/tomcatjia-gou/
+
+
 
 
 3. 手工编写一个Servlet
@@ -99,11 +103,18 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 	注意：具体的可以参考 Servlet生命周期.png
 	注意：回想Servlet class hierarch, 最顶层的Servlet接口中的三大方法就是 init(), service()和destroy()
 
+	参考：http://7xph6d.com1.z0.glb.clouddn.com/javaweb_servlet-lifecycle.png
+
+
+
 
 8. 编写Servlet的doGet()和doPost()方法时，需要抛出 ServletException 和 IOException
 
 
-9. Tomcat容器装载Servlet的几种情况。
+
+
+
+9. Tomcat容器加载Servlet的几种情况。
 
 	【1】Servlet容器启动时自动装载某些Servlet, 实现它只需要在web.xml文件中的<Servlet></Servlet>之间，添加如下代码：
 <loadon-startup>1</loadon-startup>, 数字越小表示优先级别越高。自动装载后，意味着已经创建了Servlet实例，并执行了初始化init()方法。
@@ -115,6 +126,10 @@ www.mydomain.com可以管理下一级的app1或者app2等。
 	Servelet一旦被加载后，Servelet容器调用构造方法创建一个Servlet实例, 并且调用init()方法进行初始化。在Servlet的整个生命周期内，
 init()方法只被调用一次。Servlet实例是长期驻留在服务器的内存当中的, 当服务器shutdown时会调用destroy()方法，销毁这个Servlet实例。
 	对于情况【1】, Servlet被自动装载意味着他们的实例被创建，且执行了init()初始化方法。
+
+
+	！！！总结 ！！！所谓的Servlet加载的过程就是通过调用构造函数实例化了一个自定义Servlet类的对象，并且执行了其中的初始化init()方法！！！
+
 
 
 
@@ -136,7 +151,12 @@ init()方法只被调用一次。Servlet实例是长期驻留在服务器的内�
 
 
 
+
+
 11. 如何从Servlet获取表单数据？
+
+
+
 
 
 
@@ -151,7 +171,7 @@ init()方法只被调用一次。Servlet实例是长期驻留在服务器的内�
 13. 如何通过Servlet获取初始化参数？
 
 	在项目的WEB-INF目录下的项目部署文件web.xml中配置Servlet时，可以配置一些初始化参数。而在Servlet中可以通过ServletConfig接口提供的方法
-来获取这些初始化的参数。配置初始化参数如下所示, name-value pair是同时对应配置的：
+来获取这些初始化的参数。配置初始化参数如下所示, 一个初始化参数对应一对儿 <init-param></init-param>, 然后name-value pair是同时对应配置的：
 
 						<servlet>
 						  ............
@@ -159,6 +179,7 @@ init()方法只被调用一次。Servlet实例是长期驻留在服务器的内�
 					      	<param-name>username</param-name>
 					      	<param-value>zhangsan</param-value>
 					      </init-param>
+
 					      <init-param>
 					      	<param-name>password</param-name>
 					      	<param-value>123456</param-value>
@@ -168,12 +189,22 @@ init()方法只被调用一次。Servlet实例是长期驻留在服务器的内�
 
 
 
-	具体的获取初始化参数的方法是： this.getInitParameter("param-name"), 参数是在web.xml中配置的对应的param-name标签的值。
+	具体的获取初始化参数value的方法API是： this.getInitParameter("param-name"), 参数是在web.xml中配置的对应的param-name标签的值。
 
 	点击该方法open implementation时可以得到下面的关系，说明这个方法最初是在ServletConfig接口中定义的，然后在GenericServlet这个抽象类
 中实现的，然后再由我们的自定义类继承下来的。
 	public abstract class javax.servlet.GenericServlet implements javax.servlet.Servlet, 
 	                                                              javax.servlet.ServletConfig, java.io.Serializable 
+
+
+	注意：
+	-- 这个例子说明了几个问题，首先WEB-INF目录下的项目部署文件web.xml里的信息，是随着工程中的自定义Servlet被加载时才把信息传递进去的，正因
+       为自定义Servlet被加载时会通过调用构造函数来实例化自定义Servlet类的对象，然后会去调用初始化init()方法，所以我们在init()方法中获取
+       到这些初始化的值来作为其他用途。
+
+    -- 问题的核心又回到了，该自定义Servlet何时被加载，可以参考上面的笔记！！！比较常见的是，客户首次向Servlet发送请求，此时Servlet被加载。
+
+    -- 获取初始化参数这样做的好处是，可以把一些初始化的值和工作配置在web.xml中，减少自定义Servlet类中代码的编写，more clean.
 
 
 
